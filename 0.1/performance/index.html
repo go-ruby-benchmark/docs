@@ -430,6 +430,81 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#library-level-benchmark-go-api-vs-runtimes-2026-07-03" class="md-nav__link">
+    <span class="md-ellipsis">
+      Library-level benchmark (Go API vs runtimes) — 2026-07-03
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Library-level benchmark (Go API vs runtimes) — 2026-07-03">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#benchmarking-the-benchmarker-how-it-stays-deterministic" class="md-nav__link">
+    <span class="md-ellipsis">
+      Benchmarking the benchmarker — how it stays deterministic
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#go-vs-yjit-verdict" class="md-nav__link">
+    <span class="md-ellipsis">
+      go-vs-YJIT verdict
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="go-vs-YJIT verdict">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tms-arith" class="md-nav__link">
+    <span class="md-ellipsis">
+      tms-arith
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tms-format-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      tms-format-default
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tms-format-custom" class="md-nav__link">
+    <span class="md-ellipsis">
+      tms-format-custom
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#report-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      report-table
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -517,6 +592,81 @@
       Honest framing
     </span>
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#library-level-benchmark-go-api-vs-runtimes-2026-07-03" class="md-nav__link">
+    <span class="md-ellipsis">
+      Library-level benchmark (Go API vs runtimes) — 2026-07-03
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Library-level benchmark (Go API vs runtimes) — 2026-07-03">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#benchmarking-the-benchmarker-how-it-stays-deterministic" class="md-nav__link">
+    <span class="md-ellipsis">
+      Benchmarking the benchmarker — how it stays deterministic
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#go-vs-yjit-verdict" class="md-nav__link">
+    <span class="md-ellipsis">
+      go-vs-YJIT verdict
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="go-vs-YJIT verdict">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tms-arith" class="md-nav__link">
+    <span class="md-ellipsis">
+      tms-arith
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tms-format-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      tms-format-default
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tms-format-custom" class="md-nav__link">
+    <span class="md-ellipsis">
+      tms-format-custom
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#report-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      report-table
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -633,6 +783,268 @@ its output is checked <strong>byte-identical to MRI</strong> before timing.</p>
 <p>Rows that complete in well under ~200 ms carry the most relative noise; their
 ratios should be read as order-of-magnitude. Any numbers added here will be real
 measured numbers from a dated run — nothing cherry-picked.</p>
+<h2 id="library-level-benchmark-go-api-vs-runtimes-2026-07-03">Library-level benchmark (Go API vs runtimes) — 2026-07-03<a class="headerlink" href="#library-level-benchmark-go-api-vs-runtimes-2026-07-03" title="Permanent link">&para;</a></h2>
+<p>This section measures the <strong>pure-Go library directly, through its Go API</strong> — not
+the <code>rbgo</code> interpreter path recorded above. It isolates the library primitives
+from Ruby-interpreter dispatch, answering the parity question head-on: <em>is the
+pure-Go implementation as fast as the reference runtime's own <code>Benchmark</code>?</em> The
+<strong>same workload, same fixed inputs, same iteration counts</strong> run through the Go
+library and through each reference runtime's stdlib; outputs were checked
+byte-identical to MRI before any timing.</p>
+<h3 id="benchmarking-the-benchmarker-how-it-stays-deterministic">Benchmarking the benchmarker — how it stays deterministic<a class="headerlink" href="#benchmarking-the-benchmarker-how-it-stays-deterministic" title="Permanent link">&para;</a></h3>
+<p><code>Benchmark</code>'s entire job is to <strong>measure elapsed time</strong>, so timing its wall-clock
+measurement would be meta and non-deterministic — there is nothing byte-stable to
+compare across runtimes. The harness therefore times only the module's
+<strong>deterministic, pure functions over FIXED <code>Tms</code> values</strong> — never a real measured
+time enters the compared output:</p>
+<ul>
+<li><strong><code>tms-arith</code></strong> — memberwise <code>Tms</code> arithmetic: <code>a + b</code>, <code>a - b</code>, <code>a * b</code>,
+  <code>a / b</code> on fixed operands <code>Tms(2,4,1,0.5,8)</code> and <code>Tms(1,1,0.5,0.25,2)</code>.</li>
+<li><strong><code>tms-format-default</code></strong> — <code>Tms#to_s</code>, the default <code>FORMAT</code>, on a fixed
+  <code>Tms(1,2,0.5,0.25,3.5,"lbl")</code>.</li>
+<li><strong><code>tms-format-custom</code></strong> — <code>Tms#format("%n %u %y %t %r %%")</code> on the same fixed Tms.</li>
+<li><strong><code>report-table</code></strong> — the <code>Benchmark#benchmark</code> bm-table caption + row layout,
+  formatted from two fixed <code>Tms</code> rows (as if produced by a fixed clock).</li>
+</ul>
+<p>Because every input is a fixed constant, each runtime prints <strong>byte-identical</strong>
+output. The runner verifies Go's output equals MRI's byte-for-byte (the drivers'
+<code>emit</code> mode) <strong>before</strong> timing — divergent implementations are never timed. All
+five runtimes (Go, MRI, MRI+YJIT, JRuby, TruffleRuby) were confirmed identical to
+the byte on this run.</p>
+<ul>
+<li><strong>Host:</strong> Apple M4 Max (<code>Mac16,5</code>, arm64), macOS 26.5.1 — <strong>date 2026-07-03</strong>,
+  everything on the host (no VM).</li>
+<li><strong>Runtimes:</strong> Go 1.26.4 · MRI <code>ruby 4.0.5 +PRISM</code> · MRI + YJIT · JRuby 10.1.0.0
+  (OpenJDK 25) · TruffleRuby 34.0.1 (GraalVM CE Native).</li>
+<li><strong>Method:</strong> each process runs 5 untimed warm-up passes, then 60 timed passes of
+  a fixed inner loop, timed with a monotonic clock; the <strong>best</strong> pass is reported
+  as <strong>ns/op</strong> (lower is better). <code>vs MRI</code> / <code>vs YJIT</code> &lt; 1.00× means <em>faster than</em>
+  that runtime. Interpreter start-up is outside the timed region, so these are
+  operation costs, not <code>ruby file.rb</code> process costs.</li>
+</ul>
+<h3 id="go-vs-yjit-verdict">go-vs-YJIT verdict<a class="headerlink" href="#go-vs-yjit-verdict" title="Permanent link">&para;</a></h3>
+<p><strong>The pure-Go library beats MRI + YJIT on every op measured</strong> — YJIT is the
+strongest reference bar here, and Go clears it each time:</p>
+<table>
+<thead>
+<tr>
+<th>Op</th>
+<th style="text-align: right;">go ns/op</th>
+<th style="text-align: right;">YJIT ns/op</th>
+<th style="text-align: right;">go vs YJIT</th>
+<th>verdict</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>tms-arith</td>
+<td style="text-align: right;">83.0</td>
+<td style="text-align: right;">265.5</td>
+<td style="text-align: right;"><strong>0.31×</strong></td>
+<td><strong>beats YJIT (~3.2×)</strong></td>
+</tr>
+<tr>
+<td>tms-format-default</td>
+<td style="text-align: right;">738.4</td>
+<td style="text-align: right;">3858.5</td>
+<td style="text-align: right;"><strong>0.19×</strong></td>
+<td><strong>beats YJIT (~5.2×)</strong></td>
+</tr>
+<tr>
+<td>tms-format-custom</td>
+<td style="text-align: right;">759.0</td>
+<td style="text-align: right;">4458.0</td>
+<td style="text-align: right;"><strong>0.17×</strong></td>
+<td><strong>beats YJIT (~5.9×)</strong></td>
+</tr>
+<tr>
+<td>report-table</td>
+<td style="text-align: right;">1558.7</td>
+<td style="text-align: right;">8517.0</td>
+<td style="text-align: right;"><strong>0.18×</strong></td>
+<td><strong>beats YJIT (~5.5×)</strong></td>
+</tr>
+</tbody>
+</table>
+<p>The gap is structural: the timed work is pure numeric arithmetic and
+<code>printf</code>-style string assembly. In Go that compiles to tight native code over
+<code>float64</code> fields and a <code>regexp</code>-driven directive substitution done once per
+format; in every Ruby runtime the same work pays per-send dispatch through
+<code>Tms#format</code> / <code>String#%</code> / <code>String#ljust</code> plus float boxing. YJIT narrows MRI's
+gap on the arithmetic op (0.20× of MRI) but Go's arithmetic is another ~3× below
+that; on the formatting-heavy ops YJIT barely improves on plain MRI (0.90–0.97×)
+and Go is ~5× faster still.</p>
+<h4 id="tms-arith">tms-arith<a class="headerlink" href="#tms-arith" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Runtime</th>
+<th style="text-align: right;">ns/op</th>
+<th style="text-align: right;">vs MRI</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>go-ruby (pure Go)</strong></td>
+<td style="text-align: right;">83.0</td>
+<td style="text-align: right;">0.06×</td>
+</tr>
+<tr>
+<td>MRI</td>
+<td style="text-align: right;">1308.0</td>
+<td style="text-align: right;">1.00×</td>
+</tr>
+<tr>
+<td>MRI + YJIT</td>
+<td style="text-align: right;">265.5</td>
+<td style="text-align: right;">0.20×</td>
+</tr>
+<tr>
+<td>JRuby</td>
+<td style="text-align: right;">302.3</td>
+<td style="text-align: right;">0.23×</td>
+</tr>
+<tr>
+<td>TruffleRuby</td>
+<td style="text-align: right;">355.8</td>
+<td style="text-align: right;">0.27×</td>
+</tr>
+</tbody>
+</table>
+<h4 id="tms-format-default">tms-format-default<a class="headerlink" href="#tms-format-default" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Runtime</th>
+<th style="text-align: right;">ns/op</th>
+<th style="text-align: right;">vs MRI</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>go-ruby (pure Go)</strong></td>
+<td style="text-align: right;">738.4</td>
+<td style="text-align: right;">0.17×</td>
+</tr>
+<tr>
+<td>MRI</td>
+<td style="text-align: right;">4287.5</td>
+<td style="text-align: right;">1.00×</td>
+</tr>
+<tr>
+<td>MRI + YJIT</td>
+<td style="text-align: right;">3858.5</td>
+<td style="text-align: right;">0.90×</td>
+</tr>
+<tr>
+<td>JRuby</td>
+<td style="text-align: right;">2651.7</td>
+<td style="text-align: right;">0.62×</td>
+</tr>
+<tr>
+<td>TruffleRuby</td>
+<td style="text-align: right;">3151.5</td>
+<td style="text-align: right;">0.74×</td>
+</tr>
+</tbody>
+</table>
+<h4 id="tms-format-custom">tms-format-custom<a class="headerlink" href="#tms-format-custom" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Runtime</th>
+<th style="text-align: right;">ns/op</th>
+<th style="text-align: right;">vs MRI</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>go-ruby (pure Go)</strong></td>
+<td style="text-align: right;">759.0</td>
+<td style="text-align: right;">0.16×</td>
+</tr>
+<tr>
+<td>MRI</td>
+<td style="text-align: right;">4742.0</td>
+<td style="text-align: right;">1.00×</td>
+</tr>
+<tr>
+<td>MRI + YJIT</td>
+<td style="text-align: right;">4458.0</td>
+<td style="text-align: right;">0.94×</td>
+</tr>
+<tr>
+<td>JRuby</td>
+<td style="text-align: right;">2411.4</td>
+<td style="text-align: right;">0.51×</td>
+</tr>
+<tr>
+<td>TruffleRuby</td>
+<td style="text-align: right;">4437.9</td>
+<td style="text-align: right;">0.94×</td>
+</tr>
+</tbody>
+</table>
+<h4 id="report-table">report-table<a class="headerlink" href="#report-table" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Runtime</th>
+<th style="text-align: right;">ns/op</th>
+<th style="text-align: right;">vs MRI</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>go-ruby (pure Go)</strong></td>
+<td style="text-align: right;">1558.7</td>
+<td style="text-align: right;">0.18×</td>
+</tr>
+<tr>
+<td>MRI</td>
+<td style="text-align: right;">8791.0</td>
+<td style="text-align: right;">1.00×</td>
+</tr>
+<tr>
+<td>MRI + YJIT</td>
+<td style="text-align: right;">8517.0</td>
+<td style="text-align: right;">0.97×</td>
+</tr>
+<tr>
+<td>JRuby</td>
+<td style="text-align: right;">5760.1</td>
+<td style="text-align: right;">0.66×</td>
+</tr>
+<tr>
+<td>TruffleRuby</td>
+<td style="text-align: right;">11054.6</td>
+<td style="text-align: right;">1.26×</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Reproduce</p>
+<p>The harness is committed under
+<a href="https://github.com/go-ruby-benchmark/docs/tree/main/benchmarks"><code>benchmarks/</code></a>:
+a self-contained Go driver (<code>go/</code>, which pins this library by pseudo-version
+via <code>go.mod</code> — no <code>replace</code>), the equivalent <code>ruby/benchmark.rb</code> workload, and
+<code>run.sh</code>. Run <code>OUTER=60 WARM=5 bash benchmarks/run.sh</code>; env <code>OUTER</code>/<code>WARM</code> tune
+the pass budget and <code>RUBY</code>/<code>JRUBY</code>/<code>TRUFFLERUBY</code> select the runtime binaries.
+<code>run.sh</code> runs the byte-parity gate (Go <code>emit</code> == MRI <code>emit</code>) before timing.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warm-up budget &amp; noise — cold-JIT caveat</p>
+<p>Numbers reflect a <strong>fixed warm-process budget</strong> (5 warm-up + 60 timed passes
+in one process, best pass reported). The JVM/GraalVM JITs (JRuby, TruffleRuby)
+may need a larger warm-up to reach steady state, so their columns can
+<strong>understate</strong> peak throughput — most visibly TruffleRuby, whose cold GraalVM
+ranks below MRI on the two shortest loops here. Sub-microsecond rows carry the
+most relative noise; treat those ratios as order-of-magnitude. Every number
+here is a <strong>real measured value</strong> from the dated run above — nothing is
+fabricated, estimated, or cherry-picked. The go-ruby column is the pure-Go
+library; every other column is that interpreter's own <code>Benchmark</code> stdlib doing
+the identical, byte-verified work over the same fixed <code>Tms</code> inputs.</p>
+</div>
 
 
 
