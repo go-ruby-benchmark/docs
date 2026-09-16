@@ -2,3 +2,5 @@ github.com/go-ruby-benchmark/benchmark v0.0.0-20260630081339-0d8f1c26e378 h1:tn4
 github.com/go-ruby-benchmark/benchmark v0.0.0-20260630081339-0d8f1c26e378/go.mod h1:xTLuIsErHXTxzLBJkUz5J07NwY58QJ75j2Ww4DQGFEM=
 github.com/go-ruby-benchmark/benchmark v0.0.0-20260717062257-3cc267fbe9b3 h1:zwiec5z+7x7tGeTc4j9UnCBj7BrEiFpLtedhFRTny8s=
 github.com/go-ruby-benchmark/benchmark v0.0.0-20260717062257-3cc267fbe9b3/go.mod h1:xTLuIsErHXTxzLBJkUz5J07NwY58QJ75j2Ww4DQGFEM=
+github.com/go-ruby-benchmark/benchmark v0.0.0-20260916091057-fa497ecfe30c h1:K0hhBZ/OZAF4uZjLojkGOVo9vhcefKhwo8C/a2vdyhM=
+github.com/go-ruby-benchmark/benchmark v0.0.0-20260916091057-fa497ecfe30c/go.mod h1:xTLuIsErHXTxzLBJkUz5J07NwY58QJ75j2Ww4DQGFEM=
